@@ -47,9 +47,9 @@ context = etree.iterparse(args.source_file, events=('end',), tag='tu')
 for event, tus in context:
     tus.attrib.clear()
     seg_text_src = tus.xpath('./tuv[@xml:lang="en"]/seg/text()')
-    print seg_text_src
+#    print seg_text_src
     seg_text_target = tus.xpath('./tuv[@xml:lang="hi"]/seg/text()')
-    print seg_text_target
+#    print seg_text_target
     segs = tus.xpath('.//seg')
     text_count = 0
     for seg in segs:
