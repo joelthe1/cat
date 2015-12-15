@@ -36,7 +36,7 @@ M = subset_sum(nval, Wval)
 print 'Done processing. The max value is', M[nval-1][Wval-1]
 if M[nval-1][Wval-1] <= 0:
     print 'No solution found.'
-    return
+    exit()
 
 wfile = open('output.txt', 'w')
 find_sol(nval-1, Wval-1)
