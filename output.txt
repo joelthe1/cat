@@ -1,1 +1,5 @@
-so, tommy, 
+a,so,him
+a,tommy
+a,him,no
+a,him,yo
+so,no,yo
