@@ -33,11 +33,10 @@ def build_tree():
     tree = {}
     
     tree['root'] = []
-    for child in find_children((nval,Wval)):
+    for child in find_children((nval+1,Wval+1)):
         stack.append(child)
         tree['root'].append(words[child[0]-1])
-    print stack
-    while True:
+     while True:
         counter = 0
         while counter <= Wval:
             if len(stack) < 1:
@@ -54,9 +53,13 @@ def build_tree():
 def find_children(base):
     children = []
     i,w = base
-    if i <= 1 or w-len(words[i-1]) <= 0:
+    if i <= 1 or (i <= nval and w-len(words[i-1]) <= 0):
         return children
-    w -= len(words[i-1])
+    if i > nval: #For root assume i=nval+1 and w=Wval+1
+        word_len = 1
+    else:
+        word_len = len(words[i-1])
+    w -= word_len
     i -= 1
     while M[i][w] == M[i-1][w]:
         wi = len(words[i-1])
@@ -79,6 +82,6 @@ if M[nval][Wval] <= 0:
 
 wfile = open('output.txt', 'w')
 find_sol(nval, Wval)
-print find_children((5,6))
-#print build_tree()
+#print find_children((7,7))
+print build_tree()
 wfile.close()
