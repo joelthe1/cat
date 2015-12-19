@@ -28,16 +28,57 @@ def find_sol(i, w):
         wfile.write(words[i-1] + ', ')
         find_sol(i-1, w-wi)
 
-words = ['yo', 'no', 'him']
-nval = 3 + 1
-Wval = 6 + 1
-M = subset_sum(nval, Wval)
-#print M
-print 'Done processing. The max value is', M[nval-1][Wval-1]
-if M[nval-1][Wval-1] <= 0:
+def build_tree():
+    stack = []
+    tree = {}
+    
+    tree['root'] = []
+    for child in find_children((nval,Wval)):
+        stack.append(child)
+        tree['root'].append(words[child[0]-1])
+    print stack
+    while True:
+        counter = 0
+        while counter <= Wval:
+            if len(stack) < 1:
+                return tree
+            base = stack.pop()
+            word = words[base[0]-1]
+            if word not in tree:
+                tree[word] = []
+            for child in find_children(base):
+                stack.append(child)
+                tree[word].append(words[child[0]-1])
+            counter += len(word)
+
+def find_children(base):
+    children = []
+    i,w = base
+    if i <= 1 or w-len(words[i-1]) <= 0:
+        return children
+    w -= len(words[i-1])
+    i -= 1
+    while M[i][w] == M[i-1][w]:
+        wi = len(words[i-1])
+        if M[i][w] == (wi + M[i-1][w-wi]):
+            temp = (i,w)
+            children.append((i,w))
+        i -= 1
+    children.append((i,w))
+    return children
+                                                    
+words = ['yo', 'no', 'him', 'tommy', 'so', 'a']
+nval = 6
+Wval = 6
+M = subset_sum(nval+1, Wval+1)
+print M
+print 'Done processing. The max value is', M[nval][Wval]
+if M[nval][Wval] <= 0:
     print 'No solution found.'
     exit()
 
 wfile = open('output.txt', 'w')
-find_sol(nval-1, Wval-1)
+find_sol(nval, Wval)
+print find_children((5,6))
+#print build_tree()
 wfile.close()
