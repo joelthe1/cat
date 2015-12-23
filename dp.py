@@ -48,6 +48,7 @@ def processInner(word, leftOver, value):
         for index, val in enumerate(leftOverCopy[1:]):
             if ord(x) == val:
                 leftOverCopy[index+1] = -1
+                break
     return leftOverCopy
             
 
@@ -56,7 +57,7 @@ def processValue(word, leftOver):
     for w in word:
         if ord(w) not in leftOver[1:]:
             return -100
-    return 1
+    return len(word)
 
 def intConvert(permutedString):
     inner = np.zeros([Wval+1], dtype=int)
@@ -119,6 +120,13 @@ def traverse(n, counter, route):
             temp_route.append(child)
             traverse(child, counter+len(child), temp_route)
 
+def transpose(n, W, fullM):
+    filteredM = np.empty([n, W], dtype=int)
+    for i in range(n):
+        for w in range(W):
+            filteredM[i][w] = fullM[i][w][0]
+    return filteredM
+
 rfile = sys.argv[2]
 words = []
 nval = 0
@@ -129,23 +137,21 @@ with open(rfile) as inputFile:
         words.append(line.strip())
 
 Wval = len(permutedString)
-print Wval, nval
+#print Wval, nval
 
-M = subset_sum(nval+1, Wval+1)
+fullM = subset_sum(nval+1, Wval+1)
+M = transpose(nval+1, Wval+1, fullM)
 print M
 
+max_val = M[nval][Wval]
+print 'Done processing. The max value is', max_val
+if max_val <= 0:
+    print 'No solution found.'
+    exit()
 
-#max_val = M[nval][Wval]
-#print 'Done processing. The max value is', max_val
-#if max_val <= 0:
-#    print 'No solution found.'
-#    exit()
-#
-#wfile = open('output.txt', 'w')
-##print find_children((7,7))
-##print build_tree()
-#graph = build_tree()
-#print graph
-#for root in graph['__root']:
-#    traverse(root,len(root),[root])
-#wfile.close()
+wfile = open('output.txt', 'w')
+graph = build_tree()
+print graph
+for root in graph['__root']:
+    traverse(root,len(root),[root])
+wfile.close()
