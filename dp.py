@@ -1,32 +1,68 @@
 import numpy as np
+import sys
 
 def subset_sum(n, W):
-    M = np.empty([n, W], dtype=int)
+    M = np.empty([n, W], dtype=np.ndarray)
+    inner = intConvert(permutedString)
     for x in range(W):
-        M[0][x] = 0
+        M[0][x] = np.copy(inner)
     for x in range(n):
-        M[x][0] = 0
+        M[x][0] = np.copy(inner)
     for i in range(1,n):
         for w in range(1,W):
             wi = len(words[i-1])
             if W < wi or w - wi < 0:
-                M[i][w] = M[i-1][w]
+                M[i][w] = np.copy(M[i-1][w])
             else:
-                M[i][w] = max(M[i-1][w], wi + M[i-1][w-wi])
+                vi = processValue(words[i-1], M[i-1][w-wi])
+                if M[i-1][w][0] > vi + M[i-1][w-wi][0] or vi == -100:
+                    M[i][w] = np.copy(M[i-1][w])
+                elif M[i-1][w][0] < vi + M[i-1][w-wi][0]:
+                    tempInner = processInner(words[i-1], M[i-1][w-wi], vi)
+                    M[i][w] = tempInner
+                elif M[i-1][w][0] == vi + M[i-1][w-wi][0]:
+                    tempInner = processClash(M[i-1][w], M[i-1][w-wi], vi)
+                    M[i][w] = tempInner
     return M
 
-#def find_sol(i, w):
-#    wi = len(words[i-1])
-#    if i <= 0:
-#        return
-#    if w - wi < 0:
-#        wfile.write(words[i-1] + ', ')
-#        find_sol(i-1, w)
-#    elif M[i][w] == M[i-1][w] and M[i][w] == (wi + M[i-1][w-wi]):
-#        find_sol(i-1, w)
-#    elif M[i][w] == (wi + M[i-1][w-wi]):
-#        wfile.write(words[i-1] + ', ')
-#        find_sol(i-1, w-wi)
+def processClash(inner1, inner2, value):
+    countInner1 = 0
+    countInner2 = 0
+    for x in inner1:
+        if x == -1:
+            countInner1 += 1
+    for x in inner2:
+        if x == -1:
+            countInner2 += 1
+    if countInner1 <= countInner2:
+        return np.copy(inner1)
+    temp = np.copy(inner2)
+    temp[0] += value
+    return temp
+        
+            
+def processInner(word, leftOver, value):
+    leftOverCopy = np.copy(leftOver)
+    leftOverCopy[0] += value
+    for x in word:
+        for index, val in enumerate(leftOverCopy[1:]):
+            if ord(x) == val:
+                leftOverCopy[index+1] = -1
+    return leftOverCopy
+            
+
+def processValue(word, leftOver):
+#    print word, leftOver
+    for w in word:
+        if ord(w) not in leftOver[1:]:
+            return -100
+    return 1
+
+def intConvert(permutedString):
+    inner = np.zeros([Wval+1], dtype=int)
+    for x,y in enumerate(permutedString):
+        inner[x+1] = ord(y)
+    return inner
 
 def build_tree():
     stack = []
@@ -83,22 +119,33 @@ def traverse(n, counter, route):
             temp_route.append(child)
             traverse(child, counter+len(child), temp_route)
 
-words = ['yo', 'no', 'him', 'tommy', 'so', 'a']
-nval = 6
-Wval = 6
+rfile = sys.argv[2]
+words = []
+nval = 0
+with open(rfile) as inputFile:
+    permutedString = inputFile.readline().strip()
+    for line in inputFile:
+        nval += 1
+        words.append(line.strip())
+
+Wval = len(permutedString)
+print Wval, nval
+
 M = subset_sum(nval+1, Wval+1)
 print M
-max_val = M[nval][Wval]
-print 'Done processing. The max value is', max_val
-if max_val <= 0:
-    print 'No solution found.'
-    exit()
 
-wfile = open('output.txt', 'w')
-#print find_children((7,7))
-#print build_tree()
-graph = build_tree()
-print graph
-for root in graph['__root']:
-    traverse(root,len(root),[root])
-wfile.close()
+
+#max_val = M[nval][Wval]
+#print 'Done processing. The max value is', max_val
+#if max_val <= 0:
+#    print 'No solution found.'
+#    exit()
+#
+#wfile = open('output.txt', 'w')
+##print find_children((7,7))
+##print build_tree()
+#graph = build_tree()
+#print graph
+#for root in graph['__root']:
+#    traverse(root,len(root),[root])
+#wfile.close()
