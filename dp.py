@@ -47,7 +47,8 @@ def build_tree():
                 tree[word] = []
             for child in find_children(base):
                 stack.append(child)
-                tree[word].append(words[child[0]-1])
+                if words[child[0]-1] not in tree[word]:                
+                    tree[word].append(words[child[0]-1])
             counter += len(word)
 
 def find_children(base):
