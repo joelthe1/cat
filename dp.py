@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+from tqdm import *
 
 def subset_sum(n, W):
     M = np.empty([n, W], dtype=np.ndarray)
@@ -8,7 +9,7 @@ def subset_sum(n, W):
         M[0][x] = np.copy(inner)
     for x in range(n):
         M[x][0] = np.copy(inner)
-    for i in range(1,n):
+    for i in tqdm(range(1,n),'Calculating Subset-Sum', None, True):
         for w in range(1,W):
             wi = len(words[i-1])
             if W < wi or w - wi < 0:
@@ -84,7 +85,8 @@ def build_tree():
                 tree[word] = []
             for child in find_children(base):
                 stack.append(child)
-                tree[word].append(words[child[0]-1])
+                if words[child[0]-1] not in tree[word]:
+                    tree[word].append(words[child[0]-1])
             counter += len(word)
 
 def find_children(base):
@@ -141,7 +143,7 @@ Wval = len(permutedString)
 
 fullM = subset_sum(nval+1, Wval+1)
 M = transpose(nval+1, Wval+1, fullM)
-print M
+#print M
 
 max_val = M[nval][Wval]
 print 'Done processing. The max value is', max_val
@@ -151,7 +153,7 @@ if max_val <= 0:
 
 wfile = open('output.txt', 'w')
 graph = build_tree()
-print graph
-for root in graph['__root']:
+#print graph
+for root in tqdm(graph['__root'],'Traversing Graph', None, True):
     traverse(root,len(root),[root])
 wfile.close()
