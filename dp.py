@@ -84,7 +84,8 @@ def build_tree():
             if word not in tree:
                 tree[word] = []
             for child in find_children(base):
-                stack.append(child)
+                if child not in stack:
+                    stack.append(child)
                 if words[child[0]-1] not in tree[word]:
                     tree[word].append(words[child[0]-1])
             counter += len(word)
@@ -143,8 +144,8 @@ Wval = len(permutedString)
 
 fullM = subset_sum(nval+1, Wval+1)
 M = transpose(nval+1, Wval+1, fullM)
-#print M
-
+print M
+print nval, Wval
 max_val = M[nval][Wval]
 print 'Done processing. The max value is', max_val
 if max_val <= 0:
