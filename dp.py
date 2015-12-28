@@ -22,8 +22,10 @@ def subset_sum(n, W):
                     tempInner = processInner(words[i-1], M[i-1][w-wi], vi)
                     M[i][w] = tempInner
                 elif M[i-1][w][0] == vi + M[i-1][w-wi][0]:
-                    tempInner = processClash(M[i-1][w], M[i-1][w-wi], vi)
-                    M[i][w] = tempInner
+                    #No clash handling now
+                    M[i][w] = np.copy(M[i-1][w])
+#                    tempInner = processClash(M[i-1][w], M[i-1][w-wi], vi)
+#                    M[i][w] = tempInner
     return M
 
 def processClash(inner1, inner2, value):
