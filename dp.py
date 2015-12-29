@@ -14,18 +14,20 @@ def subset_sum(n, W):
             wi = len(words[i-1])
             if W < wi or w - wi < 0:
                 M[i][w] = np.copy(M[i-1][w])
+                M[i][w][1] = 1 #Set parent route
             else:
                 vi = processValue(words[i-1], M[i-1][w-wi])
                 if M[i-1][w][0] > vi + M[i-1][w-wi][0] or vi == -100:
                     M[i][w] = np.copy(M[i-1][w])
+                    M[i][w][1] = 1 #Set parent route
                 elif M[i-1][w][0] < vi + M[i-1][w-wi][0]:
                     tempInner = processInner(words[i-1], M[i-1][w-wi], vi)
                     M[i][w] = tempInner
+                    M[i][w][1] = 2 # set parent route
                 elif M[i-1][w][0] == vi + M[i-1][w-wi][0]:
                     #No clash handling now
                     M[i][w] = np.copy(M[i-1][w])
-#                    tempInner = processClash(M[i-1][w], M[i-1][w-wi], vi)
-#                    M[i][w] = tempInner
+                    M[i][w][1] = 1 #Set parent route
     return M
 
 def processClash(inner1, inner2, value):
@@ -43,29 +45,37 @@ def processClash(inner1, inner2, value):
     temp[0] += value
     return temp
         
-            
+
 def processInner(word, leftOver, value):
     leftOverCopy = np.copy(leftOver)
     leftOverCopy[0] += value
     for x in word:
-        for index, val in enumerate(leftOverCopy[1:]):
+        for index, val in enumerate(leftOverCopy[2:]):
             if ord(x) == val:
-                leftOverCopy[index+1] = -1
+                leftOverCopy[index+2] = -1
                 break
     return leftOverCopy
             
 
 def processValue(word, leftOver):
 #    print word, leftOver
-    for w in word:
-        if ord(w) not in leftOver[1:]:
-            return -100
-    return len(word)
+    leftOverCopy = np.copy(leftOver)
+    wordCounter = 0
+    listCounter = 2 #Since [1] has value and [2] has direction. 
+    tempWord = sorted(word)
+    while listCounter < (Wval+2):
+        if wordCounter >= len(tempWord):
+            return len(tempWord)
+        if ord(tempWord[wordCounter]) == leftOverCopy[listCounter]:
+            wordCounter += 1
+        listCounter += 1
+    return -100
 
 def intConvert(permutedString):
-    inner = np.zeros([Wval+1], dtype=int)
+    inner = np.zeros([Wval+2], dtype=int)
     for x,y in enumerate(permutedString):
-        inner[x+1] = ord(y)
+        inner[x+2] = ord(y)
+    inner.sort()
     return inner
 
 def build_tree():
@@ -132,6 +142,30 @@ def transpose(n, W, fullM):
             filteredM[i][w] = fullM[i][w][0]
     return filteredM
 
+def transposeRoute(n, W, fullM):
+    filteredM = np.empty([n, W], dtype=int)
+    for i in range(n):
+        for w in range(W):
+            filteredM[i][w] = fullM[i][w][1]
+    return filteredM
+
+def traverseRoute(tM):
+    i = nval
+    w = Wval
+    ans = []
+    while True:
+        if i <= 0 or w <=0:
+            print ans
+            wfile.write(','.join(ans))
+            return
+        if tM[i][w] == 2:
+            word_len = len(words[i-1])
+            ans.append(words[i-1])
+            i -= 1
+            w -= word_len
+        elif tM[i][w] == 1:
+            i -= 1
+
 rfile = sys.argv[2]
 words = []
 nval = 0
@@ -146,8 +180,9 @@ Wval = len(permutedString)
 
 fullM = subset_sum(nval+1, Wval+1)
 M = transpose(nval+1, Wval+1, fullM)
+traversalM = transposeRoute(nval+1, Wval+1, fullM)
+
 print M
-print nval, Wval
 max_val = M[nval][Wval]
 print 'Done processing. The max value is', max_val
 if max_val <= 0:
@@ -155,8 +190,9 @@ if max_val <= 0:
     exit()
 
 wfile = open('output.txt', 'w')
-graph = build_tree()
+traverseRoute(traversalM)
+#graph = build_tree()
 #print graph
-for root in tqdm(graph['__root'],'Traversing Graph', None, True):
-    traverse(root,len(root),[root])
+#for root in tqdm(graph['__root'],'Traversing Graph', None, True):
+#    traverse(root,len(root),[root])
 wfile.close()
