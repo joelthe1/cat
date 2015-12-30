@@ -80,9 +80,7 @@ adults
 adware
 aerial
 aerospace
-ah
 ahead
-ai
 aid
 aids
 aim
@@ -92,7 +90,6 @@ air
 airline
 airlines
 airplane
-al
 ala
 alan
 alarm
@@ -964,7 +961,6 @@ declined
 decor
 decrease
 decreased
-dee
 deemed
 deep
 deeper
@@ -1300,7 +1296,6 @@ ericsson
 erotic
 erotica
 erp
-es
 escape
 escort
 escorts
@@ -1316,7 +1311,6 @@ estimated
 estimates
 estimation
 estonia
-et
 etc
 eternal
 ethernet
@@ -1324,12 +1318,10 @@ ethical
 ethics
 ethiopia
 ethnic
-eu
 euro
 europe
 european
 euros
-ex
 exact
 exam
 examination
@@ -2441,9 +2433,7 @@ orientation
 oriented
 orlando
 orleans
-os
 oscar
-ot
 other
 others
 otherwise
